@@ -12,7 +12,8 @@ function onload() {
     return window.location.replace(window.location.href + '/');
 
   var body = document.body;
-  var data = document.querySelector('pre').textContent.trim().split('\n');
+  var pre = document.querySelector('pre') || {};
+  var data = (pre.textContent || '').trim().split('\n');
 
   // clear the body
   body.innerHTML = '';
@@ -27,7 +28,13 @@ function onload() {
   // begin body, we start with a hr
   body.appendChild(document.createElement('hr'));
 
-  var pre = document.createElement('pre');
+  // reuse pre
+  pre = document.createElement('pre');
+
+  // filter out empty values
+  data = data.filter(function(line) {
+    return line;
+  });
 
   // turn json strings into javascript objects
   data = data.map(function(line) {
