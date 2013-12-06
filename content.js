@@ -47,7 +47,7 @@ function onload() {
       return -1;
     if (a.type !== 'directory' && b.type === 'directory')
       return 1;
-    return a.name > b.name;
+    return a.name > b.name ? 1 : -1;
   });
 
   // make the html entries for each file found
