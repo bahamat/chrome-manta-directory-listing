@@ -8,6 +8,11 @@ function onHeadersReceived(o) {
   if (/favicon\.ico$/.test(o.url))
     return;
 
+  // filter out requests with a search query marker
+  var search = o.url.split('?')[1];
+  if (search && search.indexOf('marker=') > -1)
+    return;
+
   // check if we are on a manta directory;
   // if we are, change the content-type to something
   // the browser can display
