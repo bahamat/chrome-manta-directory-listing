@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "manifest_version": 2,
   "description": "Create directory listings for public directories on Joyent's Manta",
-  "homepage_url": "https://github.com/bahamas10/chrome-manta-listing",
+  "homepage_url": "https://github.com/bahamas10/chrome-manta-directory-listing",
   "icons": {
   },
   "background": {
