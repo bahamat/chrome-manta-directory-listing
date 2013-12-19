@@ -4,8 +4,8 @@ var extra = ['responseHeaders', 'blocking'];
 chrome.webRequest.onHeadersReceived.addListener(onHeadersReceived, filter, extra);
 
 function onHeadersReceived(o) {
-  // filter out the favicon
-  if (/favicon\.ico$/.test(o.url))
+  // filter out any asset requests
+  if (o.type !== 'main_frame')
     return;
 
   // filter out requests with a search query marker
