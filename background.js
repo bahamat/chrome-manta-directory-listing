@@ -1,18 +1,12 @@
-var filter = {urls: ['<all_urls>']};
+/* global chrome */
+var filter = {urls: ['<all_urls>'], types: ['main_frame']};
 var extra = ['responseHeaders', 'blocking'];
+
+var dirct = 'application/x-json-stream; type=directory';
 
 chrome.webRequest.onHeadersReceived.addListener(onHeadersReceived, filter, extra);
 
 function onHeadersReceived(o) {
-  // filter out any asset requests
-  if (o.type !== 'main_frame')
-    return;
-
-  // filter out requests with a search query marker
-  var search = o.url.split('?')[1];
-  if (search && search.indexOf('marker=') > -1)
-    return;
-
   // check if we are on a manta directory;
   // if we are, change the content-type to something
   // the browser can display
@@ -22,9 +16,17 @@ function onHeadersReceived(o) {
     var value = o.responseHeaders[i].value || '';
     //console.log('`%s` => `%s`', name, value);
     if (name.toLowerCase() === 'content-type' &&
-        value.toLowerCase() === 'application/x-json-stream; type=directory') {
+        value.toLowerCase() === dirct) {
       isdirectory = true;
       o.responseHeaders[i].value = 'text/plain';
+      // we store a custom header if it was a dir, so when chrome pulls the page
+      // from its cache, we can determine if it is a dir
+      o.responseHeaders.push({name: 'x-old-content-type', value: dirct});
+      break;
+    } else if (name.toLowerCase() === 'x-old-content-type' &&
+        value.toLowerCase() === dirct) {
+      // we are viewing a chrome cached directory
+      isdirectory = true;
       break;
     }
   }
@@ -34,11 +36,11 @@ function onHeadersReceived(o) {
     return;
 
   // inject the content script and css file to the current tab
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    var tab = tabs[0];
-    chrome.tabs.insertCSS(tab.id, {file: 'style.css'});
-    chrome.tabs.executeScript(tab.id, {file: 'content.js'});
-  });
+  // seriously, there is a race condition with the cache
+  setTimeout(function() {
+    chrome.tabs.insertCSS(null, {file: 'style.css', runAt: 'document_end'});
+    chrome.tabs.executeScript(null, {file: 'content.js', runAt: 'document_end'});
+  }, 100);
 
   // return the modified response headers
   return {responseHeaders: o.responseHeaders};
