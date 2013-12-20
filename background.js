@@ -36,12 +36,17 @@ function onHeadersReceived(o) {
     return;
 
   // inject the content script and css file to the current tab
+  inject();
   // seriously, there is a race condition with the cache
-  setTimeout(function() {
-    chrome.tabs.insertCSS(null, {file: 'style.css', runAt: 'document_end'});
-    chrome.tabs.executeScript(null, {file: 'content.js', runAt: 'document_end'});
-  }, 100);
+  // so try to inject it 100ms after the initial injection,
+  // the content script can deal with handling multiple injectons
+  setTimeout(inject, 250);
 
   // return the modified response headers
   return {responseHeaders: o.responseHeaders};
+}
+
+function inject() {
+  chrome.tabs.insertCSS(null, {file: 'style.css', runAt: 'document_end'});
+  chrome.tabs.executeScript(null, {file: 'content.js', runAt: 'document_end'});
 }
