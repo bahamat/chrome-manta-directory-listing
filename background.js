@@ -38,8 +38,9 @@ function onHeadersReceived(o) {
   // inject the content script and css file to the current tab
   inject();
   // seriously, there is a race condition with the cache
-  // so try to inject it 100ms after the initial injection,
-  // the content script can deal with handling multiple injectons
+  // so try to inject it "sometime" after the initial injection,
+  // the content script can (and does) deal with handling multiple
+  // injectons
   setTimeout(inject, 250);
 
   // return the modified response headers
