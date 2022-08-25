@@ -1,8 +1,8 @@
 {
   "name": "Manta Directory Listing",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "manifest_version": 2,
-  "description": "Create directory listings for public directories on Joyent's Manta",
+  "description": "Create directory listings for public directories in Manta Object Storage",
   "homepage_url": "https://github.com/bahamas10/chrome-manta-directory-listing",
   "icons": {
   },
@@ -12,6 +12,7 @@
   "permissions": [
     "webRequest",
     "webRequestBlocking",
+    "*://*.manta.mnx.io/*",
     "*://*.manta.joyent.com/*"
   ]
 }
